@@ -39,4 +39,26 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+public function leaveRequests()
+{
+    return $this->hasMany(LeaveRequest::class);
+}
+
+public function assignedTasks()
+{
+    return $this->hasMany(Task::class, 'assigned_to');
+}
+
+public function createdTasks()
+{
+    return $this->hasMany(Task::class, 'created_by');
+}
+
+
 }
