@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files (IMPORTANT - never commit these)
+.env
+.env.local
+.env.*.local
+frontend/.env
+backend/.env
+
+# Laravel
+backend/storage/*.key
+backend/bootstrap/cache/*.php
+backend/public/storage
+backend/.phpunit.result.cache
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# Logs
+*.log
+backend/storage/logs/*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
