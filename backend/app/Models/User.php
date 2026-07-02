@@ -60,5 +60,21 @@ public function createdTasks()
     return $this->hasMany(Task::class, 'created_by');
 }
 
+public function roleModel()
+{
+    return Role::where('slug', $this->role)->first();
+}
+
+public function hasPermission(string $key): bool
+{
+    if ($this->role === 'admin') {
+        return true; // admin always has full access
+    }
+
+    $role = $this->roleModel();
+
+    return $role ? $role->permissions()->where('key', $key)->exists() : false;
+}
+
 
 }

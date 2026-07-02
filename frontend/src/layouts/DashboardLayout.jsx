@@ -1,20 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import {
-  LayoutDashboard,
-  CalendarCheck,
-  CalendarClock,
-  History,
-  UserCircle,
-  Users,
-  ClipboardList,
-  BarChart3,
-  ShieldCheck,
-  ListChecks,
-  Menu,
-  X,
-  LogOut,
-  ChevronDown,
+import { LayoutDashboard,CalendarCheck,CalendarClock,History,UserCircle,  Users,  ClipboardList,  BarChart3,ShieldCheck,ListChecks,Menu,X,LogOut,ChevronDown,
 } from "lucide-react";
 import clsx from "clsx";
 import { useAuth } from "../context/AuthContext";
@@ -36,6 +22,7 @@ const adminNav = [
   { to: "/admin/leave", label: "Leave Requests", icon: CalendarClock },
   { to: "/admin/tasks", label: "Tasks", icon: ClipboardList },
   { to: "/admin/reports", label: "Reports", icon: BarChart3 },
+  { to: "/admin/grade-settings", label: "Grading", icon: BarChart3 },
   { to: "/admin/roles", label: "Roles & Permissions", icon: ShieldCheck },
 ];
 

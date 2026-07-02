@@ -20,7 +20,11 @@ import MyTasks from "./pages/user/MyTasks";
 import TaskDetail from "./pages/user/TaskDetail";
 import AdminTasks from "./pages/admin/Tasks";
 import CreateTask from "./pages/admin/CreateTask";
-
+import Roles from "./pages/admin/Roles";
+import AdminAttendance from "./pages/admin/Attendance";
+import AdminUsers from "./pages/admin/Users";
+import Reports from "./pages/admin/Reports";
+import GradeSettings from "./pages/admin/GradeSettings";
 
 
 
@@ -64,7 +68,12 @@ export default function App() {
                 <Route path="/admin/leave" element={<AdminLeaveRequests />} />
                 <Route path="/admin/tasks" element={<AdminTasks />} />
                 <Route path="/admin/tasks/create" element={<CreateTask />} />
-</Route>
+                <Route path="/admin/roles" element={<Roles />} />
+                <Route path="/admin/attendance" element={<AdminAttendance />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
+                <Route path="/admin/reports" element={<Reports />} />
+                <Route path="/admin/grade-settings" element={<GradeSettings />} />
+               </Route>
               </Route>
             </Route>
 
