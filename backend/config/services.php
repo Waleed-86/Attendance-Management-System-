@@ -18,6 +18,18 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+
+    'whatsapp' => [
+    'driver' => env('WHATSAPP_DRIVER', 'log'),
+    'meta_token' => env('WHATSAPP_META_TOKEN'),
+    'meta_phone_id' => env('WHATSAPP_META_PHONE_ID'),
+    'twilio_sid' => env('WHATSAPP_TWILIO_SID'),
+    'twilio_token' => env('WHATSAPP_TWILIO_TOKEN'),
+    'twilio_from' => env('WHATSAPP_TWILIO_FROM'),
+],
+
+
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],

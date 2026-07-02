@@ -6,10 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Leave\StoreLeaveRequest;
 use App\Http\Resources\LeaveRequestResource;
 use App\Models\LeaveRequest;
+use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class LeaveController extends Controller
 {
+    public function __construct(protected NotificationService $notifications) {}
+
     /**
      * Submit a new leave request.
      */
@@ -17,7 +21,6 @@ class LeaveController extends Controller
     {
         $data = $request->validated();
 
-        // Prevent overlapping leave requests for the same user
         $overlap = LeaveRequest::where('user_id', $request->user()->id)
             ->whereIn('status', ['pending', 'approved'])
             ->where(function ($q) use ($data) {
@@ -41,6 +44,12 @@ class LeaveController extends Controller
             'user_id' => $request->user()->id,
             'status' => 'pending',
         ]);
+
+        // Notify all admins about the new leave request
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $this->notifications->leaveSubmitted($admin, $request->user(), $data['leave_type']);
+        }
 
         return response()->json([
             'message' => 'Leave request submitted successfully.',

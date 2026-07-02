@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LeaveRequestResource;
 use App\Models\LeaveRequest;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class LeaveController extends Controller
 {
-    /**
-     * All leave requests, with filters (admin).
-     */
+    public function __construct(protected NotificationService $notifications) {}
+
     public function index(Request $request)
     {
         $request->validate([
@@ -48,9 +48,6 @@ class LeaveController extends Controller
         ]);
     }
 
-    /**
-     * Approve or reject a leave request.
-     */
     public function review(Request $request, LeaveRequest $leaveRequest)
     {
         $request->validate([
@@ -71,11 +68,26 @@ class LeaveController extends Controller
             'reviewed_at' => now(),
         ]);
 
-        // TODO (Step 12+): dispatch WhatsApp notification job here
+        $leaveRequest->load('user');
+
+        if ($request->status === 'approved') {
+            $this->notifications->leaveApproved(
+                $leaveRequest->user,
+                $leaveRequest->leave_type,
+                $leaveRequest->from_date->format('Y-m-d'),
+                $leaveRequest->to_date->format('Y-m-d'),
+            );
+        } else {
+            $this->notifications->leaveRejected(
+                $leaveRequest->user,
+                $leaveRequest->leave_type,
+                $request->admin_comment,
+            );
+        }
 
         return response()->json([
             'message' => "Leave request {$request->status} successfully.",
-            'data' => new LeaveRequestResource($leaveRequest->load(['user', 'reviewedBy'])),
+            'data' => new LeaveRequestResource($leaveRequest->load('reviewedBy')),
         ]);
     }
 }

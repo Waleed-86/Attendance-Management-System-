@@ -7,13 +7,13 @@ use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    /**
-     * List all tasks (admin), with filters.
-     */
+    public function __construct(protected NotificationService $notifications) {}
+
     public function index(Request $request)
     {
         $request->validate([
@@ -51,9 +51,6 @@ class TaskController extends Controller
         ]);
     }
 
-    /**
-     * Create and assign a new task.
-     */
     public function store(StoreTaskRequest $request)
     {
         $task = Task::create([
@@ -62,17 +59,19 @@ class TaskController extends Controller
             'status' => 'pending',
         ]);
 
-        // TODO (Step 13+): dispatch WhatsApp notification job to assignee here
+        $task->load('assignee');
+        $this->notifications->taskAssigned(
+            $task->assignee,
+            $task->title,
+            $task->due_date->format('Y-m-d'),
+        );
 
         return response()->json([
             'message' => 'Task assigned successfully.',
-            'data' => new TaskResource($task->load(['assignee', 'creator'])),
+            'data' => new TaskResource($task->load('creator')),
         ], 201);
     }
 
-    /**
-     * Approve or reject a submitted task, with feedback.
-     */
     public function review(Request $request, Task $task)
     {
         $request->validate([
@@ -94,8 +93,13 @@ class TaskController extends Controller
         ]);
 
         $task->update(['status' => $request->status]);
+        $task->load('assignee');
 
-        // TODO (Step 13+): dispatch WhatsApp notification job to assignee here
+        if ($request->status === 'approved') {
+            $this->notifications->taskApproved($task->assignee, $task->title);
+        } else {
+            $this->notifications->taskRejected($task->assignee, $task->title, $request->admin_feedback);
+        }
 
         return response()->json([
             'message' => "Task {$request->status} successfully.",
@@ -103,9 +107,6 @@ class TaskController extends Controller
         ]);
     }
 
-    /**
-     * Get list of users for the "assign to" dropdown.
-     */
     public function assignableUsers()
     {
         $users = User::where('role', '!=', 'admin')

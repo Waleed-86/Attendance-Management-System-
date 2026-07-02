@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AttendanceResource;
 use App\Models\Attendance;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
 class AttendanceController extends Controller
 {
+    public function __construct(protected NotificationService $notifications) {}
+
     /**
      * Mark today's attendance for the logged-in user.
      */
@@ -40,11 +42,12 @@ class AttendanceController extends Controller
                 ]);
             });
         } catch (\Illuminate\Database\QueryException $e) {
-            // Catches the DB unique constraint as a final safety net
             return response()->json([
                 'message' => 'Attendance has already been marked for today.',
             ], 409);
         }
+
+        $this->notifications->attendanceMarked($user, $today);
 
         return response()->json([
             'message' => 'Attendance marked successfully.',
