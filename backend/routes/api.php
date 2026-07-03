@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\GradeSettingController;
 use App\Http\Controllers\Api\Admin\LeaveController as AdminLeaveController;
 use App\Http\Controllers\Api\Admin\ReportController;
@@ -9,7 +10,9 @@ use App\Http\Controllers\Api\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\LeaveController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +29,16 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Dashboards
+    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+    Route::get('/admin/dashboard/stats', [AdminDashboardController::class, 'stats']);
+
+    // Profile
+    Route::prefix('profile')->group(function () {
+        Route::post('/', [ProfileController::class, 'update']); // POST because of file upload
+        Route::post('/change-password', [ProfileController::class, 'changePassword']);
+    });
 
     // Attendance (user-facing)
     Route::prefix('attendance')->group(function () {

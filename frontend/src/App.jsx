@@ -25,6 +25,7 @@ import AdminAttendance from "./pages/admin/Attendance";
 import AdminUsers from "./pages/admin/Users";
 import Reports from "./pages/admin/Reports";
 import GradeSettings from "./pages/admin/GradeSettings";
+import Profile from "./pages/user/Profile";
 
 
 
@@ -61,6 +62,7 @@ export default function App() {
                 <Route path="/leave" element={<Leave />} />
                 <Route path="/tasks" element={<MyTasks />} />
                 <Route path="/tasks/:id" element={<TaskDetail />} />
+                <Route path="/profile" element={<Profile />} />
 
                 {/* Admin-only routes */}
                 <Route element={<RoleRoute allowedRoles={["admin"]} />}>
